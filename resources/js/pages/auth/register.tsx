@@ -1,9 +1,11 @@
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { LoaderCircle, Tractor, User, Users, Truck, ShoppingBag } from 'lucide-react';
 import { useState } from 'react';
 
 import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import InputError from '@/components/input-error';
 import AuthLayout from '@/layouts/auth-layout';
 import type { UserRole } from '@/types';
 
@@ -47,6 +49,7 @@ const roles = [
 export default function Register({ errors = {} }: RegisterProps) {
     const [step, setStep] = useState(1);
     const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
+    const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
     const { data, setData, post, processing, errors: formErrors } = useForm({
         name: '',
         email: '',
@@ -56,6 +59,78 @@ export default function Register({ errors = {} }: RegisterProps) {
         role: '' as UserRole,
     });
 
+    const validateStep2 = (): boolean => {
+        const errors: Record<string, string> = {};
+        
+        if (!data.name.trim()) {
+            errors.name = 'Name is required';
+        } else if (data.name.length < 2) {
+            errors.name = 'Name must be at least 2 characters';
+        }
+        
+        if (!data.email.trim()) {
+            errors.email = 'Email is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+            errors.email = 'Please enter a valid email address';
+        }
+        
+        if (!data.phone.trim()) {
+            errors.phone = 'Phone number is required';
+        } else if (!/^\+?[\d\s-]{10,}$/.test(data.phone.replace(/\s/g, ''))) {
+            errors.phone = 'Please enter a valid phone number';
+        }
+        
+        if (!data.password) {
+            errors.password = 'Password is required';
+        } else if (data.password.length < 8) {
+            errors.password = 'Password must be at least 8 characters';
+        }
+        
+        if (!data.password_confirmation) {
+            errors.password_confirmation = 'Please confirm your password';
+        } else if (data.password !== data.password_confirmation) {
+            errors.password_confirmation = 'Passwords do not match';
+        }
+        
+        setValidationErrors(errors);
+        return Object.keys(errors).length === 0;
+    };
+
+    const validateStep3 = (): boolean => {
+        if (selectedRole === 'farmer') {
+            const farmName = (document.getElementById('farm_name') as HTMLInputElement)?.value;
+            const location = (document.getElementById('location') as HTMLInputElement)?.value;
+            const size = (document.getElementById('size') as HTMLInputElement)?.value;
+            
+            const errors: Record<string, string> = {};
+            
+            if (!farmName?.trim()) {
+                errors.farm_name = 'Farm name is required';
+            }
+            if (!location?.trim()) {
+                errors.location = 'Location is required';
+            }
+            if (!size || parseInt(size) <= 0) {
+                errors.size = 'Please enter a valid farm size';
+            }
+            
+            setValidationErrors(prev => ({ ...prev, ...errors }));
+            return Object.keys(errors).length === 0;
+        }
+        
+        if (selectedRole === 'consumer') {
+            const address = (document.getElementById('address') as HTMLInputElement)?.value;
+            
+            if (!address?.trim()) {
+                setValidationErrors({ address: 'Delivery address is required' });
+                return false;
+            }
+            setValidationErrors({});
+        }
+        
+        return true;
+    };
+
     const handleRoleSelect = (role: UserRole) => {
         setSelectedRole(role);
         setData('role', role);
@@ -64,16 +139,22 @@ export default function Register({ errors = {} }: RegisterProps) {
 
     const handleSubmitBasic = (e: React.FormEvent) => {
         e.preventDefault();
-        setStep(3);
+        if (validateStep2()) {
+            setValidationErrors({});
+            setStep(3);
+        }
     };
 
     const handleFinalSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        post(route('register'), {
-            onSuccess: () => {
-                // Will redirect based on role
-            },
-        });
+        if (validateStep3()) {
+            setValidationErrors({});
+            post(route('register'), {
+                onSuccess: () => {
+                    // Will redirect based on role
+                },
+            });
+        }
     };
 
     return (

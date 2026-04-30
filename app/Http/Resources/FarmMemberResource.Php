@@ -1,0 +1,2 @@
+<?php
+namespace App\Http\Resources;use Illuminate\Http\Request;use Illuminate\Http\Resources\Json\JsonResource;class FarmMemberResource extends JsonResource{public function toArray(Request $request): array{return ['id'=>$this->id,'farm_id'=>$this->farm_id,'user_id'=>$this->user_id,'role'=>$this->role,'status'=>$this->status,'user'=>new UserResource($this->whenLoaded('user')),];}}

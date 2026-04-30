@@ -186,3 +186,115 @@ export interface ValidationError {
     message: string;
     field?: string;
 }
+
+export interface CartItem {
+    id: number;
+    product_id: number;
+    product: Product;
+    quantity: number;
+    price: number;
+    created_at: string;
+}
+
+export interface Order {
+    id: number;
+    order_number: string;
+    consumer_id: number;
+    consumer?: User;
+    rider_id?: number;
+    rider?: User;
+    items: OrderItem[];
+    subtotal: number;
+    delivery_fee: number;
+    total: number;
+    status: OrderStatus;
+    delivery_address: string;
+    delivery_phone: string;
+    notes?: string;
+    payment_method: 'cod' | 'card' | 'online';
+    payment_status: 'pending' | 'paid' | 'failed';
+    created_at: string;
+    updated_at: string;
+}
+
+export type OrderStatus = 
+    | 'pending'
+    | 'confirmed'
+    | 'preparing'
+    | 'ready'
+    | 'picked_up'
+    | 'delivered'
+    | 'cancelled';
+
+export interface OrderItem {
+    id: number;
+    order_id: number;
+    product_id: number;
+    product: Product;
+    quantity: number;
+    price: number;
+    subtotal: number;
+}
+
+export interface Delivery {
+    id: number;
+    order_id: number;
+    order: Order;
+    rider_id: number;
+    rider?: User;
+    status: DeliveryStatus;
+    pickup_address: string;
+    delivery_address: string;
+    estimated_delivery?: string;
+    actual_delivery?: string;
+    notes?: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export type DeliveryStatus = 
+    | 'assigned'
+    | 'accepted'
+    | 'picked_up'
+    | 'in_transit'
+    | 'delivered'
+    | 'cancelled'
+    | 'failed';
+
+export interface Subscription {
+    id: number;
+    consumer_id: number;
+    consumer?: User;
+    farm_id: number;
+    farm?: Farm;
+    product_id: number;
+    product: Product;
+    frequency: SubscriptionFrequency;
+    quantity: number;
+    price: number;
+    status: SubscriptionStatus;
+    start_date: string;
+    end_date?: string;
+    next_delivery?: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export type SubscriptionFrequency = 'daily' | 'weekly' | 'biweekly' | 'monthly';
+export type SubscriptionStatus = 'active' | 'paused' | 'cancelled' | 'expired';
+
+export interface Earnings {
+    total_earnings: number;
+    pending_earnings: number;
+    completed_deliveries: number;
+    today_earnings: number;
+    this_week: number;
+    this_month: number;
+}
+
+export interface DashboardStats {
+    total: number;
+    active: number;
+    pending: number;
+    completed: number;
+}

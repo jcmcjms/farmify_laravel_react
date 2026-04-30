@@ -7,10 +7,14 @@ use App\Http\Resources\ReviewResource;
 use App\Models\Notification;
 use App\Models\Product;
 use App\Models\ProductReview;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
-class ReviewController extends Controller{
-public function store(ReviewStoreRequest $request): JsonResponse{
+class ReviewController extends Controller
+{
+    use \Illuminate\Database\Eloquent\Factories\HasFactory;
+
+    public function store(ReviewStoreRequest $request): JsonResponse{
 $user=Auth::user();
 $validated=$request->validated();
 if(ProductReview::where('reviewer_id',$user->id)->where('product_id',$validated['product_id'])->exists()){return new ApiResponse(null,'You have already reviewed this product',422);}

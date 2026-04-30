@@ -11,9 +11,16 @@ class FarmMember extends Model
 {
     use HasFactory, HasUuids;
 
-    protected $fillable = [
-        'farm_id', 'user_id', 'role',
+protected $fillable = [
+        'farm_', 'user_', 'role', 'status', 'status',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'role' => FarmMemberRole::class,
+        ];
+    }
 
     public function farm(): BelongsTo
     {

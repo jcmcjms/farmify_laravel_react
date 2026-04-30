@@ -1,0 +1,2 @@
+<?php
+namespace App\Http\Resources;use Illuminate\Http\Request;use Illuminate\Http\Resources\Json\JsonResource;class FarmPlotResource extends JsonResource{public function toArray(Request $request): array{return ['id'=>$this->id,'farm_id'=>$this->farm_id,'name'=>$this->name,'size_value'=>(float)$this->size_value,'size_unit'=>$this->size_unit,'soil_type'=>$this->soil_type,'irrigation_type'=>$this->irrigation_type,'status'=>$this->status,'created_at'=>$this->created_at?->toIso8601String(),];}}
