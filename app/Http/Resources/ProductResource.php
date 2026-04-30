@@ -6,20 +6,20 @@ class ProductResource extends JsonResource{
 public function toArray(Request $request): array{
 return [
 'id' => $this->id,
-'farmer_?->id' => $this->farmer_id,
+'farmer_id' => $this->farmer_id,
 'farm_id' => $this->farm_id,
 'name' => $this->name,
 'description' => $this->description,
 'category' => $this->category,
 'price' => (float)$this->price,
-'price_Unit' => $this->price_Unit,
+'price_unit' => $this->price_unit,
 'stock_quantity' => (float)$this->stock_quantity,
-'stock_Unit' => $this->stock_Unit,
+'stock_unit' => $this->stock_unit,
 'status' => $this->status->value,
 'images' => $this->images ?? [],
 'farmer' => new UserResource($this->whenLoaded('farmer')),
 'farm' => new FarmResource($this->whenLoaded('farm')),
-'created_at' => $this->created_at?->toIso8String(),
+'created_at' => $this->created_at?->toIso8601String(),
 ];
 }
 }
