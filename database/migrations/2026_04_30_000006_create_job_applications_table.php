@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('job_applications', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('job_id')->constrained('jobs')->onDelete('cascade');
-            $table->foreignUuid('laborer_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('laborer_id')->constrained('users')->onDelete('cascade');
             $table->text('cover_letter')->nullable();
             $table->enum('status', ['pending', 'accepted', 'rejected', 'withdrawn'])->default('pending');
             $table->timestamps();

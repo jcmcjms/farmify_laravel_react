@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('jobs', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('poster_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('poster_id')->constrained('users')->onDelete('cascade');
             $table->foreignUuid('farm_id')->nullable()->constrained('farms')->onDelete('set null');
             $table->string('title');
             $table->text('description')->nullable();

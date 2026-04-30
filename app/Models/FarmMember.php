@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\FarmMemberRole;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,8 +12,8 @@ class FarmMember extends Model
 {
     use HasFactory, HasUuids;
 
-protected $fillable = [
-        'farm_', 'user_', 'role', 'status', 'status',
+    protected $fillable = [
+        'farm_id', 'user_id', 'role', 'status',
     ];
 
     protected function casts(): array

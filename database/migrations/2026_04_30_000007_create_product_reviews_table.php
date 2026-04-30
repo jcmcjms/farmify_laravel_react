@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('product_reviews', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('reviewer_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('reviewer_id')->constrained('users')->onDelete('cascade');
             $table->foreignUuid('product_id')->constrained('products')->onDelete('cascade');
-            $table->foreignUuid('farmer_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('farmer_id')->constrained('users')->onDelete('cascade');
             $table->unsignedTinyInteger('rating')->check('rating >= 1 AND rating <= 5');
             $table->text('comment')->nullable();
             $table->timestamp('created_at')->useCurrent();

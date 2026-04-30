@@ -11,9 +11,9 @@ return new class extends Migration
         Schema::create('farm_members', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('farm_id')->constrained('farms')->onDelete('cascade');
-            $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->enum('role', ['owner', 'manager', 'worker'])->default('worker');
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
 
             $table->unique(['farm_id', 'user_id']);
             $table->index('farm_id');
