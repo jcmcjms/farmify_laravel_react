@@ -1,0 +1,92 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: farmify-app
+    ports:
+      - "8000:8000"
+      - "5173:5173"
+    volumes:
+      - .:/var/www/farmify
+      - /var/www/farmify/vendor
+      - /var/www/farmify/node_modules
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/var/www/farmify/database/database.sqlite
+      - CACHE_DRIVER=file
+      - SESSION_DRIVER=file
+      - QUEUE_CONNECTION=sync
+    depends_on:
+      - redis
+    networks:
+      - farmify-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: farmify-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - farmify-network
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: farmify-mailpit
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    environment:
+      - MP_DATABASE=/data/mailpit.db
+    volumes:
+      - mailpit-data:/data
+    networks:
+      - farmify-network
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: farmify-queue
+    command: php artisan queue:work --tries=3 --delay=3
+    volumes:
+      - .:/var/www/farmify
+    depends_on:
+      - app
+      - redis
+    networks:
+      - farmify-network
+    restart: unless-stopped
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: farmify-scheduler
+    command: >
+      sh -c "while true; do
+        php artisan schedule:run;
+        sleep 60;
+      done"
+    volumes:
+      - .:/var/www/farmify
+    depends_on:
+      - app
+      - redis
+    networks:
+      - farmify-network
+    restart: unless-stopped
+
+networks:
+  farmify-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  mailpit-data:

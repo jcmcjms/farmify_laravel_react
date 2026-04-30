@@ -1,0 +1,189 @@
+@import 'tailwindcss';
+
+@plugin 'tailwindcss-animate';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+    --font-sans:
+        'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-sidebar: var(--sidebar-background);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+
+    --color-farm-primary: var(--farm-primary);
+    --color-farm-primary-foreground: var(--farm-primary-foreground);
+    --color-farm-secondary: var(--farm-secondary);
+    --color-farm-secondary-foreground: var(--farm-secondary-foreground);
+    --color-farm-accent: var(--farm-accent);
+    --color-farm-accent-foreground: var(--farm-accent-foreground);
+    --color-farm-success: var(--farm-success);
+    --color-farm-warning: var(--farm-warning);
+    --color-farm-error: var(--farm-error);
+    --color-farm-info: var(--farm-info);
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+}
+
+:root {
+    --background: hsl(0, 0%, 100%);
+    --foreground: hsl(0, 0%, 3.9%);
+    --card: hsl(0, 0%, 100%);
+    --card-foreground: hsl(0, 0%, 3.9%);
+    --popover: hsl(0, 0%, 100%);
+    --popover-foreground: hsl(0, 0%, 3.9%);
+    --primary: hsl(142, 71%, 45%);
+    --primary-foreground: hsl(0, 0%, 100%);
+    --secondary: hsl(38, 92%, 50%);
+    --secondary-foreground: hsl(0, 0%, 100%);
+    --muted: hsl(40, 47%, 96%);
+    --muted-foreground: hsl(0, 0%, 45.1%);
+    --accent: hsl(38, 92%, 96%);
+    --accent-foreground: hsl(38, 92%, 20%);
+    --destructive: hsl(0, 84.2%, 60.2%);
+    --destructive-foreground: hsl(0, 0%, 98%);
+    --border: hsl(0, 0%, 92.8%);
+    --input: hsl(0, 0%, 89.8%);
+    --ring: hsl(142, 71%, 45%);
+    --chart-1: hsl(142, 71%, 45%);
+    --chart-2: hsl(38, 92%, 50%);
+    --chart-3: hsl(25, 83%, 55%);
+    --chart-4: hsl(160, 60%, 45%);
+    --chart-5: hsl(340, 75%, 55%);
+    --radius: 0.5rem;
+    --sidebar-background: hsl(142, 30%, 96%);
+    --sidebar-foreground: hsl(0, 0%, 20%);
+    --sidebar-primary: hsl(142, 71%, 45%);
+    --sidebar-primary-foreground: hsl(0, 0%, 100%);
+    --sidebar-accent: hsl(142, 40%, 90%);
+    --sidebar-accent-foreground: hsl(142, 71%, 35%);
+    --sidebar-border: hsl(0, 0%, 85%);
+    --sidebar-ring: hsl(142, 71%, 45%);
+    --farm-primary: hsl(142, 71%, 45%);
+    --farm-primary-foreground: hsl(0, 0%, 100%);
+    --farm-secondary: hsl(38, 92%, 50%);
+    --farm-secondary-foreground: hsl(0, 0%, 100%);
+    --farm-accent: hsl(25, 83%, 55%);
+    --farm-accent-foreground: hsl(0, 0%, 100%);
+    --farm-success: hsl(142, 71%, 45%);
+    --farm-warning: hsl(38, 92%, 50%);
+    --farm-error: hsl(0, 84%, 60%);
+    --farm-info: hsl(200, 80%, 45%);
+}
+
+.dark {
+    --background: hsl(0, 0%, 8%);
+    --foreground: hsl(0, 0%, 96%);
+    --card: hsl(0, 0%, 12%);
+    --card-foreground: hsl(0, 0%, 96%);
+    --popover: hsl(0, 0%, 12%);
+    --popover-foreground: hsl(0, 0%, 96%);
+    --primary: hsl(142, 71%, 55%);
+    --primary-foreground: hsl(0, 0%, 100%);
+    --secondary: hsl(38, 92%, 55%);
+    --secondary-foreground: hsl(0, 0%, 0%);
+    --muted: hsl(0, 0%, 18%);
+    --muted-foreground: hsl(0, 0%, 63.9%);
+    --accent: hsl(38, 92%, 25%);
+    --accent-foreground: hsl(38, 92%, 96%);
+    --destructive: hsl(0, 84%, 60%);
+    --destructive-foreground: hsl(0, 0%, 98%);
+    --border: hsl(0, 0%, 22%);
+    --input: hsl(0, 0%, 22%);
+    --ring: hsl(142, 71%, 55%);
+    --chart-1: hsl(142, 71%, 55%);
+    --chart-2: hsl(38, 92%, 55%);
+    --chart-3: hsl(25, 83%, 60%);
+    --chart-4: hsl(160, 60%, 50%);
+    --chart-5: hsl(340, 75%, 60%);
+    --sidebar-background: hsl(0, 0%, 10%);
+    --sidebar-foreground: hsl(0, 0%, 80%);
+    --sidebar-primary: hsl(142, 71%, 55%);
+    --sidebar-primary-foreground: hsl(0, 0%, 100%);
+    --sidebar-accent: hsl(0, 0%, 20%);
+    --sidebar-accent-foreground: hsl(142, 71%, 85%);
+    --sidebar-border: hsl(0, 0%, 22%);
+    --sidebar-ring: hsl(142, 71%, 55%);
+    --farm-primary: hsl(142, 71%, 55%);
+    --farm-primary-foreground: hsl(0, 0%, 100%);
+    --farm-secondary: hsl(38, 92%, 55%);
+    --farm-secondary-foreground: hsl(0, 0%, 0%);
+    --farm-accent: hsl(25, 83%, 60%);
+    --farm-accent-foreground: hsl(0, 0%, 100%);
+    --farm-success: hsl(142, 71%, 55%);
+    --farm-warning: hsl(38, 92%, 55%);
+    --farm-error: hsl(0, 84%, 60%);
+    --farm-info: hsl(200, 80%, 50%);
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}

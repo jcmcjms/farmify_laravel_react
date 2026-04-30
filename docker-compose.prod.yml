@@ -1,0 +1,137 @@
+version: '3.9'
+
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: farmify-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./storage:/var/www/farmify/storage:rw
+      - ./public:/var/www/farmify/public:ro
+    depends_on:
+      - php-fpm
+    networks:
+      - farmify-network
+    restart: unless-stopped
+
+  php-fpm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: farmify-php-fpm
+    volumes:
+      - .:/var/www/farmify
+      - ./storage:/var/www/farmify/storage
+    environment:
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - DB_CONNECTION=mysql
+      - DB_HOST=${DB_HOST}
+      - DB_PORT=3306
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PORT=6379
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - QUEUE_CONNECTION=redis
+      - MAIL_MAILER=smtp
+      - MAIL_HOST=${MAIL_HOST}
+      - MAIL_PORT=${MAIL_PORT}
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
+      - MAIL_ENCRYPTION=${MAIL_ENCRYPTION}
+      - MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS}
+      - MAIL_FROM_NAME="${APP_NAME}"
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - farmify-network
+    restart: unless-stopped
+
+  mysql:
+    image: mysql:8
+    container_name: farmify-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USERNAME}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - farmify-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: farmify-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    networks:
+      - farmify-network
+    restart: unless-stopped
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: farmify-queue
+    command: php artisan queue:work redis --tries=3 --delay=3 --sleep=3
+    volumes:
+      - .:/var/www/farmify
+      - ./storage:/var/www/farmify/storage
+    depends_on:
+      - php-fpm
+      - mysql
+      - redis
+    networks:
+      - farmify-network
+    restart: unless-stopped
+    deploy:
+      replicas: 2
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: farmify-scheduler
+    command: >
+      sh -c "while true; do
+        php artisan schedule:run;
+        sleep 60;
+      done"
+    volumes:
+      - .:/var/www/farmify
+      - ./storage:/var/www/farmify/storage
+    depends_on:
+      - php-fpm
+      - mysql
+      - redis
+    networks:
+      - farmify-network
+    restart: unless-stopped
+
+networks:
+  farmify-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  redis-data:
